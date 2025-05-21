@@ -1,6 +1,8 @@
-# 🔉 Sound Event Localization and Detection Evaluated in Real Spatial Sound Scenes
+# 🔉 Sound Event Localization and Detection
 
-Final project for the course Deep Learning based on the DCASE 2023 Challenge.
+Final project for the course Deep Learning based on the DCASE 2023 Challenge -
+**Sound Event Localization and Detection Evaluated in Real Spatial Sound
+Scenes**.
 
 ## Description
 
