@@ -73,8 +73,9 @@ def features_and_labels(waveform, metadata, doa_transformation):
 
         # A single audio file has 6 simultaneous events, but we omit it
         events = sorted(events)[:MAX_EVENTS]
-        for i, (cls, source, azimuth, elevation, distance) in enumerate(events):
-            labels[frame, i] = torch.tensor([cls, azimuth, elevation, distance])
+        for i, (cls, _, azimuth, elevation, distance) in enumerate(events):
+            # Class 0 indicates no event
+            labels[frame, i] = torch.tensor([cls + 1, azimuth, elevation, distance])
 
     return features, labels
 

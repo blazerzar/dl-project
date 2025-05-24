@@ -29,7 +29,29 @@ and in Tokyo, Japan by Sony, using a similar setup and annotation procedure.
 As in the previous challenges, the dataset is delivered in two spatial
 recording formats.
 
-*The text in this section is excerpted from the DCASE2023 Challenge.*
+*The preceding text in this section is excerpted from the DCASE2023 Challenge.*
+
+Dataset should be placed in the `data` directory in the root of the project.
+The directory structure should look like:
+
+```text
+data
+├── foa_dev
+│   ├── dev-test-sony
+│   ├── dev-test-tau
+│   ├── dev-train-sony
+│   └── dev-train-tau
+├── metadata_dev
+│   ├── dev-test-sony
+│   ├── dev-test-tau
+│   ├── dev-train-sony
+│   └── dev-train-tau
+└── video_dev
+    ├── dev-test-sony
+    ├── dev-test-tau
+    ├── dev-train-sony
+    └── dev-train-tau
+```
 
 ## References
 
