@@ -11,7 +11,7 @@ class ConvBlock(nn.Module):
         self.relu = nn.ReLU()
         self.bn = nn.BatchNorm2d(out_channels)
         self.pool = nn.MaxPool2d(kernel_size=pool_size)
-        self.dropout = nn.Dropout()
+        self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
         x = self.conv(x)
@@ -22,7 +22,7 @@ class ConvBlock(nn.Module):
         return x
 
 
-class SELDNet(nn.Module):
+class SELDNetBackbone(nn.Module):
     def __init__(
         self,
         num_classes,
@@ -32,16 +32,12 @@ class SELDNet(nn.Module):
         dropout,
         rnn_layers,
         mhsa_layers,
-        fc_layers,
-        seld=True,
     ):
         super().__init__()
         self.num_classes = num_classes
         self.num_events = num_events
         self.mhsa_layers = mhsa_layers
-        self.fc_layers = fc_layers
         self.dropout = dropout
-        self.seld = seld
 
         self.convs = nn.Sequential(
             ConvBlock(input_dim, hidden_dim, (3, 3), (4, 5), dropout),
@@ -61,17 +57,12 @@ class SELDNet(nn.Module):
         self.mhsa = nn.ModuleList()
         self.ln = nn.ModuleList()
         for _ in range(mhsa_layers):
-            self.mhsa.append(nn.MultiheadAttention(hidden_dim * 2, 8, batch_first=True))
+            self.mhsa.append(
+                nn.MultiheadAttention(
+                    hidden_dim * 2, 8, batch_first=True, dropout=dropout
+                )
+            )
             self.ln.append(nn.LayerNorm(hidden_dim * 2))
-
-        fc_dim = hidden_dim * 2
-        self.fc = nn.ModuleList()
-        for i in range(fc_layers - 1):
-            self.fc.append(nn.Linear(fc_dim, hidden_dim))
-            fc_dim = hidden_dim
-
-        output_dim = num_classes * num_events * (3 if seld else 1)
-        self.head = nn.Linear(fc_dim, output_dim)
 
     def forward(self, x, lengths):
         x = self.convs(x)
@@ -92,17 +83,6 @@ class SELDNet(nn.Module):
         for i in range(self.mhsa_layers):
             x = x + self.mhsa[i](x, x, x, need_weights=False)[0]
             x = self.ln[i](x)
-            x = F.dropout(x, p=self.dropout)
+            x = F.dropout(x, p=self.dropout, training=self.training)
 
-        for i in range(self.fc_layers - 1):
-            x = self.fc[i](x)
-            x = F.relu(x)
-            x = F.dropout(x, p=self.dropout)
-        x = self.head(x)
-
-        if self.seld:
-            x = x.reshape(x.shape[0], -1, self.num_events, self.num_classes, 3)
-            x = F.tanh(x)
-        else:
-            x = x.reshape(x.shape[0], -1, self.num_events, self.num_classes)
         return x
