@@ -236,8 +236,7 @@ def multi_task_loss(outputs, labels, *, sde_weight=1.0, predictions=False):
 
     Returns:
         - loss: Tensor scalar
-        - predictions, labels: list [frame, class, azimuth, elevation] for
-            each batch element
+        - predictions, labels: {block index: {class index: [[frames, doa]]}}
     """
     mt_labels = multi_task_labels(labels)
 
