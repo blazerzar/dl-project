@@ -53,6 +53,13 @@ data
     └── dev-train-tau
 ```
 
+## Results
+
+The results of the evaluation are shown in the report in this repository. An
+example of labels and predictions for a windows of 5 seconds is shown below.
+
+<img src="figures/predictions.png" width="500" alt="Example of predictions">
+
 ## References
 
 - [DCASE2023 Challenge](https://dcase.community/challenge2023/)
