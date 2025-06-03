@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from tqdm import tqdm
 
+from conformer import SELDConformerBackbone
 from SELD_evaluation_metrics import SELDMetrics
 from seld_net import SELDNetBackbone
 from utils import spherical_to_cartesian
@@ -38,7 +39,7 @@ class MultiTaskSELD(nn.Module):
                 variable_length=False,
             )
         elif backbone == 'conformer':
-            raise NotImplementedError('Conformer not implemented yet')
+            self.backbone = SELDConformerBackbone(input_dim, dropout)
         else:
             raise ValueError(f'Invalid backbone: "{backbone}"')
 
